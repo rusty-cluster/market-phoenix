@@ -17,8 +17,7 @@ config :market, MarketWeb.Endpoint,
     formats: [json: MarketWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: Market.PubSub,
-  live_view: [signing_salt: "WJS8a+nc"]
+  pubsub_server: Market.PubSub
 
 # Configures the mailer
 #
