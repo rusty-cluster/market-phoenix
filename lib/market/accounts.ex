@@ -1,126 +1,35 @@
 defmodule Market.Accounts do
-  @moduledoc """
-  The Accounts context.
-  """
-
   import Ecto.Query, warn: false
   alias Market.Repo
 
   alias Market.Accounts.{Vendor, VendorToken, VendorNotifier}
 
-  ## Database getters
-
-  @doc """
-  Gets a vendor by email.
-
-  ## Examples
-
-      iex> get_vendor_by_email("foo@example.com")
-      %Vendor{}
-
-      iex> get_vendor_by_email("unknown@example.com")
-      nil
-
-  """
   def get_vendor_by_email(email) when is_binary(email) do
     Repo.get_by(Vendor, email: email)
   end
 
-  @doc """
-  Gets a vendor by email and password.
-
-  ## Examples
-
-      iex> get_vendor_by_email_and_password("foo@example.com", "correct_password")
-      %Vendor{}
-
-      iex> get_vendor_by_email_and_password("foo@example.com", "invalid_password")
-      nil
-
-  """
   def get_vendor_by_email_and_password(email, password)
       when is_binary(email) and is_binary(password) do
     vendor = Repo.get_by(Vendor, email: email)
     if Vendor.valid_password?(vendor, password), do: vendor
   end
 
-  @doc """
-  Gets a single vendor.
-
-  Raises `Ecto.NoResultsError` if the Vendor does not exist.
-
-  ## Examples
-
-      iex> get_vendor!(123)
-      %Vendor{}
-
-      iex> get_vendor!(456)
-      ** (Ecto.NoResultsError)
-
-  """
   def get_vendor!(id), do: Repo.get!(Vendor, id)
 
-  ## Vendor registration
-
-  @doc """
-  Registers a vendor.
-
-  ## Examples
-
-      iex> register_vendor(%{field: value})
-      {:ok, %Vendor{}}
-
-      iex> register_vendor(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def register_vendor(attrs) do
     %Vendor{}
     |> Vendor.registration_changeset(attrs)
     |> Repo.insert()
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking vendor changes.
-
-  ## Examples
-
-      iex> change_vendor_registration(vendor)
-      %Ecto.Changeset{data: %Vendor{}}
-
-  """
   def change_vendor_registration(%Vendor{} = vendor, attrs \\ %{}) do
     Vendor.registration_changeset(vendor, attrs, hash_password: false, validate_email: false)
   end
 
-  ## Settings
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for changing the vendor email.
-
-  ## Examples
-
-      iex> change_vendor_email(vendor)
-      %Ecto.Changeset{data: %Vendor{}}
-
-  """
   def change_vendor_email(vendor, attrs \\ %{}) do
     Vendor.email_changeset(vendor, attrs, validate_email: false)
   end
 
-  @doc """
-  Emulates that the email will change without actually changing
-  it in the database.
-
-  ## Examples
-
-      iex> apply_vendor_email(vendor, "valid password", %{email: ...})
-      {:ok, %Vendor{}}
-
-      iex> apply_vendor_email(vendor, "invalid password", %{email: ...})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def apply_vendor_email(vendor, password, attrs) do
     vendor
     |> Vendor.email_changeset(attrs)
@@ -128,12 +37,6 @@ defmodule Market.Accounts do
     |> Ecto.Changeset.apply_action(:update)
   end
 
-  @doc """
-  Updates the vendor email using the given token.
-
-  If the token matches, the vendor email is updated and the token is deleted.
-  The confirmed_at date is also updated to the current time.
-  """
   def update_vendor_email(vendor, token) do
     context = "change:#{vendor.email}"
 
@@ -157,15 +60,6 @@ defmodule Market.Accounts do
     |> Ecto.Multi.delete_all(:tokens, VendorToken.vendor_and_contexts_query(vendor, [context]))
   end
 
-  @doc ~S"""
-  Delivers the update email instructions to the given vendor.
-
-  ## Examples
-
-      iex> deliver_vendor_update_email_instructions(vendor, current_email, &url(~p"/vendors/settings/confirm_email/#{&1})")
-      {:ok, %{to: ..., body: ...}}
-
-  """
   def deliver_vendor_update_email_instructions(%Vendor{} = vendor, current_email, update_email_url_fun)
       when is_function(update_email_url_fun, 1) do
     {encoded_token, vendor_token} = VendorToken.build_email_token(vendor, "change:#{current_email}")
@@ -174,31 +68,10 @@ defmodule Market.Accounts do
     VendorNotifier.deliver_update_email_instructions(vendor, update_email_url_fun.(encoded_token))
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for changing the vendor password.
-
-  ## Examples
-
-      iex> change_vendor_password(vendor)
-      %Ecto.Changeset{data: %Vendor{}}
-
-  """
   def change_vendor_password(vendor, attrs \\ %{}) do
     Vendor.password_changeset(vendor, attrs, hash_password: false)
   end
 
-  @doc """
-  Updates the vendor password.
-
-  ## Examples
-
-      iex> update_vendor_password(vendor, "valid password", %{password: ...})
-      {:ok, %Vendor{}}
-
-      iex> update_vendor_password(vendor, "invalid password", %{password: ...})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def update_vendor_password(vendor, password, attrs) do
     changeset =
       vendor
@@ -244,18 +117,6 @@ defmodule Market.Accounts do
 
   ## Confirmation
 
-  @doc ~S"""
-  Delivers the confirmation email instructions to the given vendor.
-
-  ## Examples
-
-      iex> deliver_vendor_confirmation_instructions(vendor, &url(~p"/vendors/confirm/#{&1}"))
-      {:ok, %{to: ..., body: ...}}
-
-      iex> deliver_vendor_confirmation_instructions(confirmed_vendor, &url(~p"/vendors/confirm/#{&1}"))
-      {:error, :already_confirmed}
-
-  """
   def deliver_vendor_confirmation_instructions(%Vendor{} = vendor, confirmation_url_fun)
       when is_function(confirmation_url_fun, 1) do
     if vendor.confirmed_at do

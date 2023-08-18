@@ -27,13 +27,11 @@ defmodule MarketWeb.VendorAuth do
   """
   def log_in_vendor(conn, vendor, params \\ %{}) do
     token = Accounts.generate_vendor_session_token(vendor)
-    vendor_return_to = get_session(conn, :vendor_return_to)
 
     conn
     |> renew_session()
     |> put_token_in_session(token)
     |> maybe_write_remember_me_cookie(token, params)
-    |> redirect(to: vendor_return_to || signed_in_path(conn))
   end
 
   defp maybe_write_remember_me_cookie(conn, token, %{"remember_me" => "true"}) do
@@ -81,7 +79,6 @@ defmodule MarketWeb.VendorAuth do
     conn
     |> renew_session()
     |> delete_resp_cookie(@remember_me_cookie)
-    |> redirect(to: ~p"/")
   end
 
   @doc """
@@ -109,91 +106,6 @@ defmodule MarketWeb.VendorAuth do
   end
 
   @doc """
-  Handles mounting and authenticating the current_vendor in LiveViews.
-
-  ## `on_mount` arguments
-
-    * `:mount_current_vendor` - Assigns current_vendor
-      to socket assigns based on vendor_token, or nil if
-      there's no vendor_token or no matching vendor.
-
-    * `:ensure_authenticated` - Authenticates the vendor from the session,
-      and assigns the current_vendor to socket assigns based
-      on vendor_token.
-      Redirects to login page if there's no logged vendor.
-
-    * `:redirect_if_vendor_is_authenticated` - Authenticates the vendor from the session.
-      Redirects to signed_in_path if there's a logged vendor.
-
-  ## Examples
-
-  Use the `on_mount` lifecycle macro in LiveViews to mount or authenticate
-  the current_vendor:
-
-      defmodule MarketWeb.PageLive do
-        use MarketWeb, :live_view
-
-        on_mount {MarketWeb.VendorAuth, :mount_current_vendor}
-        ...
-      end
-
-  Or use the `live_session` of your router to invoke the on_mount callback:
-
-      live_session :authenticated, on_mount: [{MarketWeb.VendorAuth, :ensure_authenticated}] do
-        live "/profile", ProfileLive, :index
-      end
-  """
-  def on_mount(:mount_current_vendor, _params, session, socket) do
-    {:cont, mount_current_vendor(socket, session)}
-  end
-
-  def on_mount(:ensure_authenticated, _params, session, socket) do
-    socket = mount_current_vendor(socket, session)
-
-    if socket.assigns.current_vendor do
-      {:cont, socket}
-    else
-      socket =
-        socket
-        |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
-        |> Phoenix.LiveView.redirect(to: ~p"/vendors/log_in")
-
-      {:halt, socket}
-    end
-  end
-
-  def on_mount(:redirect_if_vendor_is_authenticated, _params, session, socket) do
-    socket = mount_current_vendor(socket, session)
-
-    if socket.assigns.current_vendor do
-      {:halt, Phoenix.LiveView.redirect(socket, to: signed_in_path(socket))}
-    else
-      {:cont, socket}
-    end
-  end
-
-  defp mount_current_vendor(socket, session) do
-    Phoenix.Component.assign_new(socket, :current_vendor, fn ->
-      if vendor_token = session["vendor_token"] do
-        Accounts.get_vendor_by_session_token(vendor_token)
-      end
-    end)
-  end
-
-  @doc """
-  Used for routes that require the vendor to not be authenticated.
-  """
-  def redirect_if_vendor_is_authenticated(conn, _opts) do
-    if conn.assigns[:current_vendor] do
-      conn
-      |> redirect(to: signed_in_path(conn))
-      |> halt()
-    else
-      conn
-    end
-  end
-
-  @doc """
   Used for routes that require the vendor to be authenticated.
 
   If you want to enforce the vendor email is confirmed before
@@ -206,8 +118,6 @@ defmodule MarketWeb.VendorAuth do
       conn
       |> put_flash(:error, "You must log in to access this page.")
       |> maybe_store_return_to()
-      |> redirect(to: ~p"/vendors/log_in")
-      |> halt()
     end
   end
 
