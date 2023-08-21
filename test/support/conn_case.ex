@@ -35,4 +35,17 @@ defmodule MarketWeb.ConnCase do
     Market.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
+
+  def register_and_log_in_vendor(%{conn: conn}) do
+    vendor = Market.AccountsFixtures.vendor_fixture()
+    %{conn: log_in_vendor(conn, vendor), vendor: vendor}
+  end
+
+  def log_in_vendor(conn, vendor) do
+    token = Market.Accounts.generate_vendor_session_token(vendor)
+
+    conn
+    |> Phoenix.ConnTest.init_test_session(%{})
+    |> Plug.Conn.put_session(:vendor_token, token)
+  end
 end

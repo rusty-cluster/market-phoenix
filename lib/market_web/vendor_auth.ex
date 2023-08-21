@@ -2,7 +2,6 @@ defmodule MarketWeb.VendorAuth do
   use MarketWeb, :verified_routes
 
   import Plug.Conn
-  import Phoenix.Controller
 
   alias Market.Accounts
 
@@ -13,18 +12,6 @@ defmodule MarketWeb.VendorAuth do
   @remember_me_cookie "_market_web_vendor_remember_me"
   @remember_me_options [sign: true, max_age: @max_age, same_site: "Lax"]
 
-  @doc """
-  Logs the vendor in.
-
-  It renews the session ID and clears the whole session
-  to avoid fixation attacks. See the renew_session
-  function to customize this behaviour.
-
-  It also sets a `:live_socket_id` key in the session,
-  so LiveView sessions are identified and automatically
-  disconnected on log out. The line can be safely removed
-  if you are not using LiveView.
-  """
   def log_in_vendor(conn, vendor, params \\ %{}) do
     token = Accounts.generate_vendor_session_token(vendor)
 
@@ -42,39 +29,15 @@ defmodule MarketWeb.VendorAuth do
     conn
   end
 
-  # This function renews the session ID and erases the whole
-  # session to avoid fixation attacks. If there is any data
-  # in the session you may want to preserve after log in/log out,
-  # you must explicitly fetch the session data before clearing
-  # and then immediately set it after clearing, for example:
-  #
-  #     defp renew_session(conn) do
-  #       preferred_locale = get_session(conn, :preferred_locale)
-  #
-  #       conn
-  #       |> configure_session(renew: true)
-  #       |> clear_session()
-  #       |> put_session(:preferred_locale, preferred_locale)
-  #     end
-  #
   defp renew_session(conn) do
     conn
     |> configure_session(renew: true)
     |> clear_session()
   end
 
-  @doc """
-  Logs the vendor out.
-
-  It clears all session data for safety. See renew_session.
-  """
   def log_out_vendor(conn) do
     vendor_token = get_session(conn, :vendor_token)
     vendor_token && Accounts.delete_vendor_session_token(vendor_token)
-
-    if live_socket_id = get_session(conn, :live_socket_id) do
-      MarketWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
-    end
 
     conn
     |> renew_session()
@@ -105,33 +68,7 @@ defmodule MarketWeb.VendorAuth do
     end
   end
 
-  @doc """
-  Used for routes that require the vendor to be authenticated.
-
-  If you want to enforce the vendor email is confirmed before
-  they use the application at all, here would be a good place.
-  """
-  def require_authenticated_vendor(conn, _opts) do
-    if conn.assigns[:current_vendor] do
-      conn
-    else
-      conn
-      |> put_flash(:error, "You must log in to access this page.")
-      |> maybe_store_return_to()
-    end
-  end
-
   defp put_token_in_session(conn, token) do
-    conn
-    |> put_session(:vendor_token, token)
-    |> put_session(:live_socket_id, "vendors_sessions:#{Base.url_encode64(token)}")
+    put_session(conn, :vendor_token, token)
   end
-
-  defp maybe_store_return_to(%{method: "GET"} = conn) do
-    put_session(conn, :vendor_return_to, current_path(conn))
-  end
-
-  defp maybe_store_return_to(conn), do: conn
-
-  defp signed_in_path(_conn), do: ~p"/"
 end
