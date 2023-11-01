@@ -20,10 +20,7 @@ defmodule MarketWeb.VendorRegistrationControllerTest do
         })
 
       assert get_session(conn, :vendor_token)
-
-      assert %{
-               "id" => _id
-             } = json_response(conn, 201)
+      assert %{"id" => _id} = json_response(conn, 201)
     end
 
     test "render errors for invalid data", %{conn: conn} do

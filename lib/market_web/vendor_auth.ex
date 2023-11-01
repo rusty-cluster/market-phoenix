@@ -71,4 +71,12 @@ defmodule MarketWeb.VendorAuth do
   defp put_token_in_session(conn, token) do
     put_session(conn, :vendor_token, token)
   end
+
+  def require_authenticated_vendor(conn, _opts) do
+    if conn.assigns[:current_vendor] do
+      conn
+    else
+      conn |> send_resp(401, "Unauthorized") |> halt()
+    end
+  end
 end

@@ -60,9 +60,14 @@ defmodule Market.Accounts do
     |> Ecto.Multi.delete_all(:tokens, VendorToken.vendor_and_contexts_query(vendor, [context]))
   end
 
-  def deliver_vendor_update_email_instructions(%Vendor{} = vendor, current_email, update_email_url_fun)
+  def deliver_vendor_update_email_instructions(
+        %Vendor{} = vendor,
+        current_email,
+        update_email_url_fun
+      )
       when is_function(update_email_url_fun, 1) do
-    {encoded_token, vendor_token} = VendorToken.build_email_token(vendor, "change:#{current_email}")
+    {encoded_token, vendor_token} =
+      VendorToken.build_email_token(vendor, "change:#{current_email}")
 
     Repo.insert!(vendor_token)
     VendorNotifier.deliver_update_email_instructions(vendor, update_email_url_fun.(encoded_token))
@@ -124,7 +129,11 @@ defmodule Market.Accounts do
     else
       {encoded_token, vendor_token} = VendorToken.build_email_token(vendor, "confirm")
       Repo.insert!(vendor_token)
-      VendorNotifier.deliver_confirmation_instructions(vendor, confirmation_url_fun.(encoded_token))
+
+      VendorNotifier.deliver_confirmation_instructions(
+        vendor,
+        confirmation_url_fun.(encoded_token)
+      )
     end
   end
 
@@ -165,7 +174,11 @@ defmodule Market.Accounts do
       when is_function(reset_password_url_fun, 1) do
     {encoded_token, vendor_token} = VendorToken.build_email_token(vendor, "reset_password")
     Repo.insert!(vendor_token)
-    VendorNotifier.deliver_reset_password_instructions(vendor, reset_password_url_fun.(encoded_token))
+
+    VendorNotifier.deliver_reset_password_instructions(
+      vendor,
+      reset_password_url_fun.(encoded_token)
+    )
   end
 
   @doc """

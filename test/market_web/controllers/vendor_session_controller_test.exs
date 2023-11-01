@@ -29,13 +29,14 @@ defmodule MarketWeb.VendorSessionControllerTest do
     test "logs the vendor in with remember me", %{conn: conn, vendor: vendor} do
       conn = init_test_session(conn, [])
 
-      conn = post(conn, ~p"/vendors/log_in", %{
-        "vendor" => %{
-          "email" => vendor.email,
-          "password" => valid_vendor_password(),
-          "remember_me" => "true"
-        }
-      })
+      conn =
+        post(conn, ~p"/vendors/log_in", %{
+          "vendor" => %{
+            "email" => vendor.email,
+            "password" => valid_vendor_password(),
+            "remember_me" => "true"
+          }
+        })
 
       assert conn.resp_cookies["_market_web_vendor_remember_me"]
     end
@@ -48,7 +49,7 @@ defmodule MarketWeb.VendorSessionControllerTest do
           "vendor" => %{"email" => vendor.email, "password" => "invalid_password"}
         })
 
-      response = json_response(conn, 200)
+      assert %{"errors" => _} = json_response(conn, 200)
     end
   end
 
