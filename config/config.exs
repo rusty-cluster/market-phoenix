@@ -28,6 +28,8 @@ config :market, MarketWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :market, Market.Mailer, adapter: Swoosh.Adapters.Local
 
+config :market, :generators, api_prefix: ""
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
