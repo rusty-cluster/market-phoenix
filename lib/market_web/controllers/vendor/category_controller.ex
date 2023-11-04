@@ -1,4 +1,4 @@
-defmodule MarketWeb.CategoryController do
+defmodule MarketWeb.Vendor.CategoryController do
   use MarketWeb, :controller
 
   alias Market.Categories

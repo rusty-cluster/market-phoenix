@@ -24,16 +24,14 @@ defmodule MarketWeb.Router do
     delete "/vendors/log_out", VendorSessionController, :delete
   end
 
-  scope "/", MarketWeb do
+  scope "/vendors", MarketWeb.Vendor do
     pipe_through [:vendor_api, :require_authenticated_vendor]
 
-    resources "/vendors/products", VendorProductController,
-      only: [:index, :show, :create, :delete, :update]
+    resources "/products", ProductController, only: [:index, :show, :create, :delete, :update]
 
-    resources "/categories", CategoryController,
-      only: [:index, :show, :create, :delete, :update]
+    resources "/categories", CategoryController, only: [:index, :show, :create, :delete, :update]
 
-    resources "/vendors/orders", VendorOrderController, only: [:index, :show, :update]
+    resources "/orders", OrderController, only: [:index, :show, :update]
   end
 
   # Enable Swoosh mailbox preview in development

@@ -1,4 +1,4 @@
-defmodule MarketWeb.CategoryJSON do
+defmodule MarketWeb.Vendor.CategoryJSON do
   alias Market.Categories.Category
 
   def index(%{categories: categories}) do

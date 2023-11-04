@@ -1,4 +1,4 @@
-defmodule MarketWeb.VendorOrderController do
+defmodule MarketWeb.Vendor.OrderController do
   use MarketWeb, :controller
 
   def create(conn, _params) do
