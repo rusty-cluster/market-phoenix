@@ -1,25 +1,19 @@
 defmodule MarketWeb.Vendor.ProductControllerTest do
   use MarketWeb.ConnCase
 
-  import Market.ProductsFixtures
+  import Market.Factory
 
   alias Market.Products.Product
 
-  @create_attrs %{
-    description: "some description",
-    name: "some name",
-    price: 42,
-    vendor_id: 42
-  }
   @update_attrs %{
     description: "some updated description",
     name: "some updated name",
-    price: 43,
-    vendor_id: 43
+    price: 43
   }
   @invalid_attrs %{description: nil, name: nil, price: nil, vendor_id: nil}
 
   setup :register_and_log_in_vendor
+
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
@@ -32,19 +26,21 @@ defmodule MarketWeb.Vendor.ProductControllerTest do
   end
 
   describe "create product" do
-    test "renders product when data is valid", %{conn: conn} do
-      conn = post(conn, ~p"/vendors/products", product: @create_attrs)
+    test "renders product when data is valid", %{conn: conn, vendor: vendor} do
+      product = params_for(:product, vendor: vendor)
+      conn = post(conn, ~p"/vendors/products", product: product)
+
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get(conn, ~p"/vendors/products/#{id}")
 
       assert %{
-               "id" => ^id,
-               "description" => "some description",
-               "name" => "some name",
+               "id" => id,
+               "description" => product.description,
+               "name" => product.name,
                "price" => 42,
-               "vendor_id" => 42
-             } = json_response(conn, 200)["data"]
+               "vendor_id" => vendor.id
+             } == json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -66,8 +62,7 @@ defmodule MarketWeb.Vendor.ProductControllerTest do
                "id" => ^id,
                "description" => "some updated description",
                "name" => "some updated name",
-               "price" => 43,
-               "vendor_id" => 43
+               "price" => 43
              } = json_response(conn, 200)["data"]
     end
 
@@ -84,14 +79,13 @@ defmodule MarketWeb.Vendor.ProductControllerTest do
       conn = delete(conn, ~p"/vendors/products/#{product}")
       assert response(conn, 204)
 
-      assert_error_sent 404, fn ->
+      assert_error_sent(404, fn ->
         get(conn, ~p"/vendors/products/#{product}")
-      end
+      end)
     end
   end
 
-  defp create_product(_) do
-    product = product_fixture()
-    %{product: product}
+  defp create_product(%{vendor: vendor}) do
+    %{product: insert(:product, vendor: vendor)}
   end
 end
