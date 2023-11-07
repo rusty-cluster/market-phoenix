@@ -12,8 +12,7 @@ defmodule Market.Factory do
     %Market.Products.Product{
       name: Faker.Cannabis.strain(),
       price: 42,
-      description: Faker.Cannabis.health_benefit(),
-      vendor: build(:vendor)
+      description: Faker.Cannabis.health_benefit()
     }
   end
 end

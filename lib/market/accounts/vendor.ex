@@ -3,6 +3,8 @@ defmodule Market.Accounts.Vendor do
   import Ecto.Changeset
 
   schema "vendors" do
+    has_many :products, Market.Products.Product
+
     field :email, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true

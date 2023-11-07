@@ -12,7 +12,7 @@ defmodule MarketWeb.Vendor.ProductController do
   end
 
   def create(conn, %{"product" => product_params}) do
-    with {:ok, %Product{} = product} <- Products.create_product(product_params) do
+    with {:ok, %Product{} = product} <- Products.create_product(vendor_id(conn), product_params) do
       conn
       |> put_status(:created)
       |> render(:show, product: product)
@@ -38,5 +38,9 @@ defmodule MarketWeb.Vendor.ProductController do
     with {:ok, %Product{}} <- Products.delete_product(product) do
       send_resp(conn, :no_content, "")
     end
+  end
+
+  defp vendor_id(conn) do
+    conn.assigns[:current_vendor][:id]
   end
 end
