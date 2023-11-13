@@ -1,4 +1,4 @@
-defmodule MarketWeb.VendorRegistrationController do
+defmodule MarketWeb.Vendor.RegistrationController do
   use MarketWeb, :controller
 
   alias Market.Accounts

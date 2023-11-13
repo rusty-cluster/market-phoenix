@@ -1,9 +1,8 @@
-defmodule Market.Accounts.Vendor do
+defmodule Market.Accounts.Retailer do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "vendors" do
-    has_many :products, Market.Products.Product
+  schema "retailers" do
     has_many :orders, Market.Orders.Order
 
     field :email, :string
@@ -15,7 +14,7 @@ defmodule Market.Accounts.Vendor do
   end
 
   @doc """
-  A vendor changeset for registration.
+  A retailer changeset for registration.
 
   It is important to validate the length of both email and password.
   Otherwise databases may truncate the email without warnings, which
@@ -37,8 +36,8 @@ defmodule Market.Accounts.Vendor do
       submitting the form), this option can be set to `false`.
       Defaults to `true`.
   """
-  def registration_changeset(vendor, attrs, opts \\ []) do
-    vendor
+  def registration_changeset(retailer, attrs, opts \\ []) do
+    retailer
     |> cast(attrs, [:email, :password])
     |> validate_email(opts)
     |> validate_password(opts)
@@ -87,12 +86,12 @@ defmodule Market.Accounts.Vendor do
   end
 
   @doc """
-  A vendor changeset for changing the email.
+  A retailer changeset for changing the email.
 
   It requires the email to change otherwise an error is added.
   """
-  def email_changeset(vendor, attrs, opts \\ []) do
-    vendor
+  def email_changeset(retailer, attrs, opts \\ []) do
+    retailer
     |> cast(attrs, [:email])
     |> validate_email(opts)
     |> case do
@@ -102,7 +101,7 @@ defmodule Market.Accounts.Vendor do
   end
 
   @doc """
-  A vendor changeset for changing the password.
+  A retailer changeset for changing the password.
 
   ## Options
 
@@ -113,8 +112,8 @@ defmodule Market.Accounts.Vendor do
       validations on a LiveView form), this option can be set to `false`.
       Defaults to `true`.
   """
-  def password_changeset(vendor, attrs, opts \\ []) do
-    vendor
+  def password_changeset(retailer, attrs, opts \\ []) do
+    retailer
     |> cast(attrs, [:password])
     |> validate_confirmation(:password, message: "does not match password")
     |> validate_password(opts)
@@ -123,18 +122,18 @@ defmodule Market.Accounts.Vendor do
   @doc """
   Confirms the account by setting `confirmed_at`.
   """
-  def confirm_changeset(vendor) do
+  def confirm_changeset(retailer) do
     now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
-    change(vendor, confirmed_at: now)
+    change(retailer, confirmed_at: now)
   end
 
   @doc """
   Verifies the password.
 
-  If there is no vendor or the vendor doesn't have a password, we call
+  If there is no retailer or the retailer doesn't have a password, we call
   `Bcrypt.no_user_verify/0` to avoid timing attacks.
   """
-  def valid_password?(%Market.Accounts.Vendor{hashed_password: hashed_password}, password)
+  def valid_password?(%Market.Accounts.Retailer{hashed_password: hashed_password}, password)
       when is_binary(hashed_password) and byte_size(password) > 0 do
     Bcrypt.verify_pass(password, hashed_password)
   end

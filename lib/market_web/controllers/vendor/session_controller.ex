@@ -1,4 +1,4 @@
-defmodule MarketWeb.VendorSessionController do
+defmodule MarketWeb.Vendor.SessionController do
   use MarketWeb, :controller
 
   alias Market.Accounts

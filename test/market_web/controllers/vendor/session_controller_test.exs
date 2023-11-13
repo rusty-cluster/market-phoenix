@@ -1,4 +1,4 @@
-defmodule MarketWeb.VendorSessionControllerTest do
+defmodule MarketWeb.Vendor.SessionControllerTest do
   use MarketWeb.ConnCase, async: true
 
   import Market.AccountsFixtures

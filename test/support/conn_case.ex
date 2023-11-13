@@ -48,4 +48,17 @@ defmodule MarketWeb.ConnCase do
     |> Phoenix.ConnTest.init_test_session(%{})
     |> Plug.Conn.put_session(:vendor_token, token)
   end
+
+  def register_and_log_in_retailer(%{conn: conn}) do
+    retailer = Market.AccountsFixtures.retailer_fixture()
+    %{conn: log_in_retailer(conn, retailer), retailer: retailer}
+  end
+
+  def log_in_retailer(conn, retailer) do
+    token = Market.Accounts.generate_retailer_session_token(retailer)
+
+    conn
+    |> Phoenix.ConnTest.init_test_session(%{})
+    |> Plug.Conn.put_session(:retailer_token, token)
+  end
 end

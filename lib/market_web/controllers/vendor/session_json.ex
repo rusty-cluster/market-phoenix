@@ -1,4 +1,4 @@
-defmodule MarketWeb.VendorSessionJSON do
+defmodule MarketWeb.Vendor.SessionJSON do
   def show(%{vendor: vendor}) do
     %{id: vendor.id}
   end
