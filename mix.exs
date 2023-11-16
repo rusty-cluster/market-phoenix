@@ -45,7 +45,8 @@ defmodule Market.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:ex_machina, "~> 2.7.0"},
-      {:faker, "~> 0.17", only: :test}
+      {:faker, "~> 0.17", only: :test},
+      {:cors_plug, "~> 3.0"}
     ]
   end
 
