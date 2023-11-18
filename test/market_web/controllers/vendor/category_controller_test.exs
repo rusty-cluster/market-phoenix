@@ -14,6 +14,7 @@ defmodule MarketWeb.Vendor.CategoryControllerTest do
   @invalid_attrs %{name: nil}
 
   setup :register_and_log_in_vendor
+
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end

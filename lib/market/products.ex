@@ -8,8 +8,18 @@ defmodule Market.Products do
     Repo.all(query)
   end
 
+  def list_products() do
+    query = from(Product)
+    Repo.all(query)
+  end
+
   def get_product!(vendor_id, id) do
     query = from(Product, where: [id: ^id, vendor_id: ^vendor_id])
+    Repo.one!(query)
+  end
+
+  def get_product!(id) do
+    query = from(Product, where: [id: ^id])
     Repo.one!(query)
   end
 

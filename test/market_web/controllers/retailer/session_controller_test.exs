@@ -56,7 +56,10 @@ defmodule MarketWeb.Retailer.SessionControllerTest do
   describe "DELETE /retailers/log_out" do
     test "logs the retailer out", %{conn: conn, retailer: retailer} do
       conn =
-        conn |> init_test_session([]) |> log_in_retailer(retailer) |> delete(~p"/retailers/log_out")
+        conn
+        |> init_test_session([])
+        |> log_in_retailer(retailer)
+        |> delete(~p"/retailers/log_out")
 
       refute get_session(conn, :retailer_token)
     end
