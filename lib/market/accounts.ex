@@ -227,7 +227,10 @@ defmodule Market.Accounts do
 
     Ecto.Multi.new()
     |> Ecto.Multi.update(:retailer, changeset)
-    |> Ecto.Multi.delete_all(:tokens, RetailerToken.retailer_and_contexts_query(retailer, [context]))
+    |> Ecto.Multi.delete_all(
+      :tokens,
+      RetailerToken.retailer_and_contexts_query(retailer, [context])
+    )
   end
 
   def deliver_retailer_update_email_instructions(
@@ -240,7 +243,11 @@ defmodule Market.Accounts do
       RetailerToken.build_email_token(retailer, "change:#{current_email}")
 
     Repo.insert!(retailer_token)
-    RetailerNotifier.deliver_update_email_instructions(retailer, update_email_url_fun.(encoded_token))
+
+    RetailerNotifier.deliver_update_email_instructions(
+      retailer,
+      update_email_url_fun.(encoded_token)
+    )
   end
 
   def change_retailer_password(retailer, attrs \\ %{}) do
@@ -307,7 +314,10 @@ defmodule Market.Accounts do
   defp confirm_retailer_multi(retailer) do
     Ecto.Multi.new()
     |> Ecto.Multi.update(:retailer, Retailer.confirm_changeset(retailer))
-    |> Ecto.Multi.delete_all(:tokens, RetailerToken.retailer_and_contexts_query(retailer, ["confirm"]))
+    |> Ecto.Multi.delete_all(
+      :tokens,
+      RetailerToken.retailer_and_contexts_query(retailer, ["confirm"])
+    )
   end
 
   def deliver_retailer_reset_password_instructions(%Retailer{} = retailer, reset_password_url_fun)

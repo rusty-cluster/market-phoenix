@@ -42,19 +42,14 @@ defmodule MarketWeb.Router do
     pipe_through [:vendor_api]
 
     resources "/products", ProductController, only: [:index, :show, :create, :delete, :update]
-
     resources "/categories", CategoryController, only: [:index, :show, :create, :delete, :update]
-
     resources "/orders", OrderController, only: [:index, :show, :update]
   end
 
   scope "/retailers", MarketWeb.Retailer do
     pipe_through [:retailer_api]
 
-    # resources "/products", ProductController, only: [:index, :show]
-    #
-    # resources "/categories", CategoryController, only: [:index, :show]
-
+    resources "/products", ProductController, only: [:index, :show]
     resources "/orders", OrderController, only: [:index, :show, :update, :create, :delete]
   end
 

@@ -25,6 +25,7 @@ defmodule Market.ProductsTest do
 
     test "create_product/2 with valid data creates a product" do
       vendor = insert(:vendor)
+
       valid_attrs = %{
         description: "some description",
         name: "some name",
