@@ -6,11 +6,10 @@ defmodule MarketWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
   end
 
   pipeline :vendor_api do
-    plug :accepts, ["json"]
-    plug :fetch_session
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_vendor
@@ -18,8 +17,6 @@ defmodule MarketWeb.Router do
   end
 
   pipeline :retailer_api do
-    plug :accepts, ["json"]
-    plug :fetch_session
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_retailer
@@ -39,7 +36,7 @@ defmodule MarketWeb.Router do
   end
 
   scope "/vendors", MarketWeb.Vendor do
-    pipe_through [:vendor_api]
+    pipe_through [:api, :vendor_api]
 
     resources "/products", ProductController, only: [:index, :show, :create, :delete, :update]
     resources "/categories", CategoryController, only: [:index, :show, :create, :delete, :update]
@@ -47,7 +44,7 @@ defmodule MarketWeb.Router do
   end
 
   scope "/retailers", MarketWeb.Retailer do
-    pipe_through [:retailer_api]
+    pipe_through [:api, :retailer_api]
 
     resources "/products", ProductController, only: [:index, :show]
     resources "/orders", OrderController, only: [:index, :show, :update, :create, :delete]
