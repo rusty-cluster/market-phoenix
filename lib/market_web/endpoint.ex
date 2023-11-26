@@ -1,7 +1,7 @@
 defmodule MarketWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :market
 
-  plug CORSPlug, origin: [System.get_env("FRONT", "localhost:3000")]
+  plug CORSPlug, origin: [System.get_env("FRONT", "http://localhost:3000")]
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
