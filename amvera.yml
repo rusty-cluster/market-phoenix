@@ -1,0 +1,13 @@
+---
+meta:
+  environment: docker
+  toolchain:
+    name: docker
+    version: latest
+build:
+  dockerfile: Dockerfile
+  skip: false
+run:
+  args: listen_addresses=0.0.0.0
+  persistenceMount: /data
+  containerPort: 80
