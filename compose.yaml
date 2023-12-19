@@ -1,0 +1,15 @@
+services:
+  web:
+    build: .
+    ports:
+      - "4000:4000"
+    environment:
+      DATABASE_URL: "ecto://market:password@postgres/market"
+      SECRET_KEY_BASE: "token"
+
+  postgres:
+    image: "postgres:alpine"
+    environment:
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_USER: "market"
+      POSTGRES_DB: "market"
