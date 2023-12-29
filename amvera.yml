@@ -8,6 +8,5 @@ build:
   dockerfile: Dockerfile
   skip: false
 run:
-  args: listen_addresses=0.0.0.0
   persistenceMount: /data
-  containerPort: 80
+  containerPort: 4000
