@@ -4,6 +4,7 @@ defmodule Market.Factory do
   def vendor_factory do
     %Market.Accounts.Vendor{
       email: Faker.Internet.email(),
+      name: Faker.Team.name(),
       hashed_password: "qwerty"
     }
   end
@@ -11,6 +12,7 @@ defmodule Market.Factory do
   def retailer_factory do
     %Market.Accounts.Retailer{
       email: Faker.Internet.email(),
+      name: Faker.Team.name(),
       hashed_password: "qwerty"
     }
   end

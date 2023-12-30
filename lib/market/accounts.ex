@@ -24,14 +24,6 @@ defmodule Market.Accounts do
     |> Repo.insert()
   end
 
-  def change_vendor_registration(%Vendor{} = vendor, attrs \\ %{}) do
-    Vendor.registration_changeset(vendor, attrs, hash_password: false, validate_email: false)
-  end
-
-  def change_vendor_email(vendor, attrs \\ %{}) do
-    Vendor.email_changeset(vendor, attrs, validate_email: false)
-  end
-
   def apply_vendor_email(vendor, password, attrs) do
     vendor
     |> Vendor.email_changeset(attrs)
@@ -73,10 +65,6 @@ defmodule Market.Accounts do
 
     Repo.insert!(vendor_token)
     VendorNotifier.deliver_update_email_instructions(vendor, update_email_url_fun.(encoded_token))
-  end
-
-  def change_vendor_password(vendor, attrs \\ %{}) do
-    Vendor.password_changeset(vendor, attrs, hash_password: false)
   end
 
   def update_vendor_password(vendor, password, attrs) do
@@ -192,14 +180,6 @@ defmodule Market.Accounts do
     |> Repo.insert()
   end
 
-  def change_retailer_registration(%Retailer{} = retailer, attrs \\ %{}) do
-    Retailer.registration_changeset(retailer, attrs, hash_password: false, validate_email: false)
-  end
-
-  def change_retailer_email(retailer, attrs \\ %{}) do
-    Retailer.email_changeset(retailer, attrs, validate_email: false)
-  end
-
   def apply_retailer_email(retailer, password, attrs) do
     retailer
     |> Retailer.email_changeset(attrs)
@@ -248,10 +228,6 @@ defmodule Market.Accounts do
       retailer,
       update_email_url_fun.(encoded_token)
     )
-  end
-
-  def change_retailer_password(retailer, attrs \\ %{}) do
-    Retailer.password_changeset(retailer, attrs, hash_password: false)
   end
 
   def update_retailer_password(retailer, password, attrs) do

@@ -16,11 +16,11 @@ defmodule MarketWeb.Retailer.RegistrationControllerTest do
         conn
         |> init_test_session([])
         |> post(~p"/retailers/register", %{
-          "retailer" => valid_retailer_attributes(email: email)
+          "retailer" => valid_retailer_attributes(email: email, name: "Company")
         })
 
       assert get_session(conn, :retailer_token)
-      assert %{"id" => _id} = json_response(conn, 201)
+      assert %{"id" => _id, "email" => ^email, "name" => "Company"} = json_response(conn, 201)
     end
 
     test "render errors for invalid data", %{conn: conn} do

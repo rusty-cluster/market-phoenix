@@ -7,12 +7,14 @@ defmodule Market.AccountsFixtures do
 
   ### Vendor
   def unique_vendor_email, do: "vendor#{System.unique_integer()}@example.com"
+  def unique_vendor_name, do: "vendor#{System.unique_integer()}"
   def valid_vendor_password, do: "hello world!"
 
   def valid_vendor_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
       email: unique_vendor_email(),
-      password: valid_vendor_password()
+      password: valid_vendor_password(),
+      name: unique_vendor_name()
     })
   end
 
@@ -33,12 +35,14 @@ defmodule Market.AccountsFixtures do
 
   # Retailer
   def unique_retailer_email, do: "retailer#{System.unique_integer()}@example.com"
+  def unique_retailer_name, do: "retailer#{System.unique_integer()}"
   def valid_retailer_password, do: "hello world!"
 
   def valid_retailer_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
       email: unique_retailer_email(),
-      password: valid_retailer_password()
+      password: valid_retailer_password(),
+      name: unique_retailer_name()
     })
   end
 
