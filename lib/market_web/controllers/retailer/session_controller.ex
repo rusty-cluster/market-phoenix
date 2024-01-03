@@ -20,6 +20,16 @@ defmodule MarketWeb.Retailer.SessionController do
     end
   end
 
+  def show(conn, _params) do
+    conn = RetailerAuth.fetch_current_retailer(conn, [])
+
+    if conn.assigns.current_retailer do
+      render(conn, :show, retailer: conn.assigns.current_retailer)
+    else
+      send_resp(conn, :not_found, "")
+    end
+  end
+
   def delete(conn, _params) do
     conn
     |> RetailerAuth.log_out_retailer()

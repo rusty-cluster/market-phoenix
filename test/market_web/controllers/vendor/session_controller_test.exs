@@ -18,12 +18,9 @@ defmodule MarketWeb.Vendor.SessionControllerTest do
 
       assert get_session(conn, :vendor_token)
 
-      # Now do a logged in request and assert on the menu
-      # conn = get(conn, ~p"/")
-      # response = html_response(conn, 200)
-      # assert response =~ vendor.email
-      # assert response =~ ~p"/vendors/settings"
-      # assert response =~ ~p"/vendors/log_out"
+      conn = get(conn, ~p"/vendors/show")
+      response = json_response(conn, 200)
+      assert %{"name" => vendor.name, "email" => vendor.email, "id" => vendor.id} == response
     end
 
     test "logs the vendor in with remember me", %{conn: conn, vendor: vendor} do

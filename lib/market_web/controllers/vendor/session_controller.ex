@@ -20,6 +20,16 @@ defmodule MarketWeb.Vendor.SessionController do
     end
   end
 
+  def show(conn, _params) do
+    conn = VendorAuth.fetch_current_vendor(conn, [])
+
+    if conn.assigns.current_vendor do
+      render(conn, :show, vendor: conn.assigns.current_vendor)
+    else
+      send_resp(conn, :not_found, "")
+    end
+  end
+
   def delete(conn, _params) do
     conn
     |> VendorAuth.log_out_vendor()

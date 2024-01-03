@@ -18,12 +18,9 @@ defmodule MarketWeb.Retailer.SessionControllerTest do
 
       assert get_session(conn, :retailer_token)
 
-      # Now do a logged in request and assert on the menu
-      # conn = get(conn, ~p"/")
-      # response = html_response(conn, 200)
-      # assert response =~ retailer.email
-      # assert response =~ ~p"/retailers/settings"
-      # assert response =~ ~p"/retailers/log_out"
+      conn = get(conn, ~p"/retailers/show")
+      response = json_response(conn, 200)
+      assert %{"name" => retailer.name, "email" => retailer.email, "id" => retailer.id} == response
     end
 
     test "logs the retailer in with remember me", %{conn: conn, retailer: retailer} do

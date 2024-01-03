@@ -29,10 +29,12 @@ defmodule MarketWeb.Router do
     post "/vendors/register", Vendor.RegistrationController, :create
     post "/vendors/log_in", Vendor.SessionController, :create
     delete "/vendors/log_out", Vendor.SessionController, :delete
+    get "/vendors/show", Vendor.SessionController, :show
 
     post "/retailers/register", Retailer.RegistrationController, :create
     post "/retailers/log_in", Retailer.SessionController, :create
     delete "/retailers/log_out", Retailer.SessionController, :delete
+    get "/retailers/show", Retailer.SessionController, :show
   end
 
   scope "/vendors", MarketWeb.Vendor do
